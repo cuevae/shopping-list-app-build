@@ -24,12 +24,6 @@
       apt:
         name: sqlite3
         state: latest
-    - name: Fill in sqlite template with initial shopping list items
-      template:
-        src: shopping-list-ini.sql.j2
-        dest: /var/www/shopping-list-app/shopping-list-ini.sql
-    - name: Create starting sqlite database
-      shell: cd /var/www/shopping-list-app && sqlite3 sla-db.sqlt < shopping-list-ini.sql && rm -f shopping-list-ini.sql
     - name: Clone app repository
       git:
         repo: https://github.com/cuevae/shopping-list-app.git
@@ -37,3 +31,9 @@
     - name: Install NPM dependencies based on package.json file created above
       npm:
         path: /var/www/shopping-list-app
+    - name: Fill in sqlite template with initial shopping list items
+      template:
+        src: shopping-list-ini.sql.j2
+        dest: /var/www/shopping-list-app/shopping-list-ini.sql
+    - name: Create starting sqlite database
+      shell: cd /var/www/shopping-list-app && sqlite3 sla-db.sqlt < shopping-list-ini.sql && rm -f shopping-list-ini.sql

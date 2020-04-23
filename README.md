@@ -1,2 +1,2 @@
-# shpping-list-app-build
+# shopping-list-app-build
 Building elements for Shopping List App

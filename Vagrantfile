@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
     sla.vm.network "private_network", ip: "192.168.33.10"
     sla.vm.network "forwarded_port", guest:3000, host: 8080
     sla.vm.synced_folder "./shopping-list-app/", "/var/www/shopping-list-app",
-      type: "nfs"
+      type: "nfs", create: true
   end
 
 

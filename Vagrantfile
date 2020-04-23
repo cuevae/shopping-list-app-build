@@ -15,7 +15,8 @@ Vagrant.configure("2") do |config|
       ansible.become_user = "root"
     end
     sla.vm.network "forwarded_port", guest:3000, host: 8080
-    sla.vm.synced_folder "shopping-list-app/pages/", "/home/vagrant/shopping-list-app/pages/"
+    sla.vm.synced_folder "shopping-list-app/pages/", "/home/vagrant/shopping-list-app/pages/",
+      create: true, owner: "vagrant", group: "vagrant"
   end
 
 

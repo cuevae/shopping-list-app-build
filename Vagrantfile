@@ -14,9 +14,10 @@ Vagrant.configure("2") do |config|
       ansible.become = true
       ansible.become_user = "root"
     end
+    sla.vm.network "private_network", ip: "192.168.33.10"
     sla.vm.network "forwarded_port", guest:3000, host: 8080
-    sla.vm.synced_folder "shopping-list-app/pages/", "/home/vagrant/shopping-list-app/pages/",
-      create: true, owner: "vagrant", group: "vagrant"
+    sla.vm.synced_folder "./shopping-list-app/", "/var/www/shopping-list-app",
+      type: "nfs"
   end
 
 

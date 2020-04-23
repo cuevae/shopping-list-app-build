@@ -1,4 +1,4 @@
---- # Install Node.js and NPM
+--- # Install Node.js, GIT, NFS and Shopping-List-App
 - hosts: all
   tasks:
     - name: Update cache
@@ -14,10 +14,14 @@
       apt:
         name: git
         state: latest
+    - name: Install NFS
+      apt:
+        name: nfs-kernel-server
+        state: latest
     - name: Clone app repository
       git:
         repo: https://github.com/cuevae/shopping-list-app.git
-        dest: /home/vagrant/
+        dest: /var/www/shopping-list-app
     - name: Install NPM dependencies based on package.json file created above
       npm:
-        path: /home/vagrant/shopping-list-app
+        path: /var/www/shopping-list-app

@@ -14,36 +14,10 @@
       apt:
         name: git
         state: latest
-    - name: Create app directory
-      file:
-        path: /home/vagrant/shopping-list-app
-        state: directory
-        owner: vagrant
-        group: vagrant
-        mode: '0755'
-    - name: Setup package.json file for NPM
-      template:
-        src: package.json.j2
-        dest: /home/vagrant/shopping-list-app/package.json
-        owner: vagrant
-        group: vagrant
-        mode: '0644'
+    - name: Clone app repository
+      git:
+        repo: https://github.com/cuevae/shopping-list-app.git
+        dest: /home/vagrant/
     - name: Install NPM dependencies based on package.json file created above
       npm:
         path: /home/vagrant/shopping-list-app
-    - name: Create pages directory
-      file:
-        path: /home/vagrant/shopping-list-app/pages
-        state: directory
-        owner: vagrant
-        group: vagrant
-        mode: '0755'
-    - name: Copy default index.js
-      template:
-        src: index.js.j2
-        dest: /home/vagrant/shopping-list-app/pages/index.js
-        owner: vagrant
-        group: vagrant
-        mode: '0644'
-    #- name: Leave app running in background
-    #  shell: cd /home/vagrant/shopping-list-app && nohup npm run dev &

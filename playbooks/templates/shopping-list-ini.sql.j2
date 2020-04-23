@@ -1,0 +1,8 @@
+create table items(
+    item_name varchar(255),
+    date_bought_uts date,
+    date_consumed_uts date
+);
+{% for item in shopping_initial_items %}
+insert into items values("{{item.item_name}}",{{item.date_bought_uts}},{% if item.date_consumed_uts == "" %}""{% else %}{{item.date_consumed_uts}}{% endif %});
+{% endfor %}

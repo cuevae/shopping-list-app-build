@@ -1,0 +1,14 @@
+---
+shopping_initial_items:
+  - 
+    item_name: "Green pepper"
+    date_bought_uts: 1587340800
+    date_consumed_uts: ""
+  - 
+    item_name: "Feta cheese"
+    date_bought_uts: 1587340800
+    date_consumed_uts: 1597340800
+  - 
+    item_name: Chicken
+    date_bought_uts: 1587340800
+    date_consumed_uts: ""

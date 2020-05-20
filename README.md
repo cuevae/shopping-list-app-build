@@ -9,6 +9,6 @@ Steps:
 3. vagrant up
 4. vagrant ssh
 5. cd /vagrant/shopping-list-app
-6. npm start
+6. npx expo start --web
 7. Once step 6 is completed, press "w" to be able to view the app in your browser
-7. Open your browser in the host machine and navigate to https://localhost:8086 to see the app
+8. Open your browser in the host machine and navigate to https://localhost:8086 to see the app

@@ -22,10 +22,38 @@
       git:
         repo: https://github.com/cuevae/shopping-list-rn-expo.git
         dest: /vagrant/shopping-list-app
-    - name: Symlink node_modules
-    #Otherwise vagrant synced folder fails with NPM (see https://stackoverflow.com/questions/41601417/vagrant-filesystem-issues-with-npm)
-      shell:
-        cmd: 'mkdir /home/vagrant/node_modules && ln -sf /home/vagrant/node_modules /vagrant/shopping-list-app/'
+    - name: Check if node_modules symlink exists
+      stat:
+        path: /vagrant/shopping-list-app/node_modules
+      register: node_modules_symlink
+    - name: Delete node_modules symlink if exists
+      file:
+        path: /vagrant/shopping-list-app/node_modules
+        state: absent
+      when: node_modules_symlink.stat.exists
+    - name: Check if node_modules folder exists
+      stat:
+        path: /home/vagrant/node_modules
+      register: node_modules_folder
+    - name: Delete node_modules folder if exists
+      file:
+        path: /home/vagrant/node_modules
+        state: absent
+      when: node_modules_folder.stat.exists
+    - name: Create node_modules folder
+      file:
+        path: /home/vagrant/node_modules
+        owner: vagrant
+        group: vagrant
+        mode: '0755'
+        state: directory
+    - name: Symlink node_modules folder
+      file: 
+        src: /home/vagrant/node_modules
+        dest: /vagrant/shopping-list-app/node_modules
+        owner: vagrant
+        group: vagrant
+        state: link
     - name: Install NPM dependencies based on package.json from the repository above
       npm:
         path: /vagrant/shopping-list-app

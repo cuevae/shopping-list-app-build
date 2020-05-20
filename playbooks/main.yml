@@ -1,7 +1,5 @@
 --- # Install Node.js, GIT, NFS and Shopping-List-App
 - hosts: all
-  vars_files:
-    - ./group_vars/shopping-list-ini-items.yml
   tasks:
     - name: Update cache
       apt:
@@ -16,24 +14,18 @@
       apt:
         name: git
         state: latest
-    - name: Install NFS
+    - name: Install PostgreSQL
       apt:
-        name: nfs-kernel-server
-        state: latest
-    - name: Install SQLite 3
-      apt:
-        name: sqlite3
+        name: postgresql
         state: latest
     - name: Clone app repository
       git:
-        repo: https://github.com/cuevae/shopping-list-app.git
-        dest: /var/www/shopping-list-app
-    - name: Install NPM dependencies based on package.json file created above
+        repo: https://github.com/cuevae/shopping-list-rn-expo.git
+        dest: /vagrant/shopping-list-app
+    - name: Symlink node_modules
+    #Otherwise vagrant synced folder fails with NPM (see https://stackoverflow.com/questions/41601417/vagrant-filesystem-issues-with-npm)
+      shell:
+        cmd: 'mkdir /home/vagrant/node_modules && ln -sf /home/vagrant/node_modules /vagrant/shopping-list-app/'
+    - name: Install NPM dependencies based on package.json from the repository above
       npm:
-        path: /var/www/shopping-list-app
-    - name: Fill in sqlite template with initial shopping list items
-      template:
-        src: shopping-list-ini.sql.j2
-        dest: /var/www/shopping-list-app/shopping-list-ini.sql
-    - name: Create starting sqlite database
-      shell: cd /var/www/shopping-list-app && sqlite3 sla-db.sqlt < shopping-list-ini.sql && rm -f shopping-list-ini.sql
+        path: /vagrant/shopping-list-app

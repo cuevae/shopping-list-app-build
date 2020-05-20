@@ -8,6 +8,7 @@ Steps:
 2. cd shopping-list-app-build
 3. vagrant up
 4. vagrant ssh
-5. cd /var/www/shopping-list-app
-6. npm run dev
-7. Open your browser in the host machine and navigate to https://localhost:8080
+5. cd /vagrant/shopping-list-app
+6. npm start
+7. Once step 6 is completed, press "w" to be able to view the app in your browser
+7. Open your browser in the host machine and navigate to https://localhost:8086 to see the app

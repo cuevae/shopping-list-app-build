@@ -1,5 +1,6 @@
---- # Install Node.js, GIT, NFS and Shopping-List-App
-- hosts: all
+--- 
+# Application host provisioning (NodeJS, GIT, App repository, Install NPM dependencies)
+- hosts: sla-host
   tasks:
     - name: Update cache
       apt:
@@ -13,10 +14,6 @@
     - name: Install GIT
       apt:
         name: git
-        state: latest
-    - name: Install PostgreSQL
-      apt:
-        name: postgresql
         state: latest
     - name: Clone app repository
       git:
@@ -54,6 +51,41 @@
         owner: vagrant
         group: vagrant
         state: link
-    - name: Install NPM dependencies based on package.json from the repository above
+    - name: Install NPM dependencies based on package.json from SLA repository
       npm:
         path: /vagrant/shopping-list-app
+# DB hosts provisioning
+- hosts: db-host
+  tasks:
+    - name: Install PostgreSQL
+      apt:
+        name: postgresql
+        state: latest
+    - name: Bring db initialization template
+      template:
+        src: psql-sla-db-init.sql.j2
+        dest: /tmp/psql-sla-db-init.sql
+    - name: Initialize DB
+      shell:
+        cmd: 'sudo -u postgres createdb sla_db && sudo -u postgres psql sla_db < /tmp/psql-sla-db-init.sql'
+    #- name: Remove initialization template
+    #  file:
+    #    state: absent
+    #    path: /tmp/psql-sla-db-init.sql
+    - name: Download and unTAR Postgrest to /usr/local/bin
+      unarchive:
+        src: https://github.com/PostgREST/postgrest/releases/download/v7.0.1/postgrest-v7.0.1-linux-x64-static.tar.xz
+        dest: /usr/local/bin
+        remote_src: yes
+    - name: Make PostgREST configuration file available
+      template:
+        src: postgREST-sladb-conn.conf.j2
+        dest: /home/vagrant/postgREST-sladb-conn.conf
+    - name: Create file to collect PostgREST connection logs
+      file:
+        path: /tmp/postgrest.log
+        state: touch
+        mode: '0766'
+    - name: Start PostgREST to run in the background
+      shell:
+        cmd: 'nohup postgrest /home/vagrant/postgREST-sladb-conn.conf </dev/null >/tmp/postgrest.log 2>&1 &'

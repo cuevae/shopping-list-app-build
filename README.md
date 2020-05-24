@@ -7,7 +7,7 @@ Steps:
 1. git clone https://github.com/cuevae/shopping-list-app-build.git
 2. cd shopping-list-app-build
 3. vagrant up
-4. vagrant ssh
+4. vagrant ssh sla-host
 5. cd /vagrant/shopping-list-app
 6. npx expo start --web
 7. Open your browser in the host machine and navigate to https://localhost:8086 to see the app

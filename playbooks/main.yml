@@ -68,10 +68,10 @@
     - name: Initialize DB
       shell:
         cmd: 'sudo -u postgres createdb sla_db && sudo -u postgres psql sla_db < /tmp/psql-sla-db-init.sql'
-    #- name: Remove initialization template
-    #  file:
-    #    state: absent
-    #    path: /tmp/psql-sla-db-init.sql
+    - name: Remove initialization template
+      file:
+        state: absent
+        path: /tmp/psql-sla-db-init.sql
     - name: Download and unTAR Postgrest to /usr/local/bin
       unarchive:
         src: https://github.com/PostgREST/postgrest/releases/download/v7.0.1/postgrest-v7.0.1-linux-x64-static.tar.xz

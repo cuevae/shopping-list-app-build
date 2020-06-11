@@ -56,8 +56,8 @@ ALTER TABLE sla.shopping_lists OWNER TO postgres;
 CREATE TABLE sla.shopping_lists_history (
     entry_id integer NOT NULL,
     sl_id integer NOT NULL,
-    change_desc character varying(255) NOT NULL,
-    "timestamp" timestamp with time zone NOT NULL
+    change character varying(255) NOT NULL,
+    date_time TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc') NOT NULL
 );
 
 
@@ -112,9 +112,8 @@ ALTER TABLE sla.shopping_lists_items OWNER TO postgres;
 CREATE TABLE sla.shopping_lists_items_history (
     entry_id integer NOT NULL,
     item_id integer NOT NULL,
-    sl_id integer NOT NULL,
-    change_desc character varying(255) NOT NULL,
-    date timestamp with time zone NOT NULL
+    change character varying(255) NOT NULL,
+    date_time timestamp WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc') NOT NULL
 );
 
 
@@ -177,7 +176,7 @@ ALTER TABLE ONLY sla.shopping_lists_items_history
 --
 
 ALTER TABLE ONLY sla.shopping_lists_items_history
-    ADD CONSTRAINT shopping_lists_items_history_pkey PRIMARY KEY (entry_id, item_id, sl_id);
+    ADD CONSTRAINT shopping_lists_items_history_pkey PRIMARY KEY (entry_id, item_id);
 
 
 --
@@ -235,7 +234,9 @@ ALTER TABLE ONLY sla.shopping_lists_items
 CREATE ROLE web_anon nologin;
 GRANT usage ON SCHEMA sla TO web_anon;
 GRANT SELECT ON sla.shopping_lists TO web_anon;
-GRANT SELECT ON sla.shopping_lists_items TO web_anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON sla.shopping_lists_items TO web_anon;
+GRANT SELECT, INSERT ON sla.shopping_lists_history TO web_anon;
+GRANT SELECT, INSERT ON sla.shopping_lists_items_history TO web_anon;
 
 CREATE ROLE authenticator LOGIN PASSWORD '.nonsecurepass321!';
 GRANT web_anon TO authenticator;
@@ -246,6 +247,54 @@ GRANT web_anon TO authenticator;
 
 --- test
 
-INSERT INTO sla.shopping_lists (name) VALUES ('my first shopping list');
-INSERT INTO sla.shopping_lists (name) VALUES ('another one');
-INSERT INTO sla.shopping_lists (name) VALUES ('s33s3');
+--- SHOPPING LISTS
+INSERT INTO sla.shopping_lists (name) VALUES ('Shopping List #1');
+INSERT INTO sla.shopping_lists (name) VALUES ('Shopping List #2');
+
+INSERT INTO sla.shopping_lists_history (sl_id, change) VALUES (1,'CREATE_LIST');
+INSERT INTO sla.shopping_lists_history (sl_id, change) VALUES (1,'UPDATE_NAME');
+
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (1, 'ORANGE');
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (1, 'GREEN_PEPPER');
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (1, 'EGG');
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (1, 'BROCCOLI');
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (1, 'RED_PEPPER');
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (1, 'PINAPPLE');
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (1, 'COURGETTE');
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (1, 'GLUTEN_FREE_BEER');
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (1, 'EGG_PLANT');
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (1, 'AVOCADO');
+
+
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (1,'CREATE_ITEM');
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (2,'CREATE_ITEM');
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (3,'CREATE_ITEM');
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (4,'CREATE_ITEM');
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (5,'CREATE_ITEM');
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (6,'CREATE_ITEM');
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (7,'CREATE_ITEM');
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (8,'CREATE_ITEM');
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (9,'CREATE_ITEM');
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (10,'CREATE_ITEM');
+
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (2, 'ICE_CREAM');
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (2, 'ONION');
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (2, 'TOMATO');
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (2, 'OLIVE');
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (2, 'CORN');
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (2, 'SALAD_BAG');
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (2, 'BROCCOLI');
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (2, 'BURGER_BREAD');
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (2, 'BACON');
+INSERT INTO sla.shopping_lists_items (sl_id, item_name) VALUES (2, 'BEER');
+
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (11,'CREATE_ITEM');
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (12,'CREATE_ITEM');
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (13,'CREATE_ITEM');
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (14,'CREATE_ITEM');
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (15,'CREATE_ITEM');
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (16,'CREATE_ITEM');
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (17,'CREATE_ITEM');
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (18,'CREATE_ITEM');
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (19,'CREATE_ITEM');
+INSERT INTO sla.shopping_lists_items_history (item_id, change) VALUES (20,'CREATE_ITEM');

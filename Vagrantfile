@@ -23,11 +23,7 @@ Vagrant.configure("2") do |config|
       ansible.become_user = "root"
     end
 
-    sla.vm.network "private_network", ip: "192.168.10.10"
-    sla.vm.network "forwarded_port", guest:19000, host: 8080
-    sla.vm.network "forwarded_port", guest:19001, host: 8081
-    sla.vm.network "forwarded_port", guest:19002, host: 8082
-    sla.vm.network "forwarded_port", guest:19006, host: 8086
+    sla.vm.network :public_network, bridge: "en0: Wi-Fi (Airport)", ip: "192.168.1.129"
 
     #Folder automated sync between host and guest machine
     sla.vm.synced_folder "shopping-list-app/", "/vagrant/shopping-list-app", create: true
@@ -51,7 +47,7 @@ Vagrant.configure("2") do |config|
       ansible.become_user = "root"
     end
 
-    dbh.vm.network "private_network", ip: "192.168.10.20"
+    dbh.vm.network :public_network, bridge: "en0: Wi-Fi (Airport)", ip: "192.168.1.81"
 
   end
   #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\

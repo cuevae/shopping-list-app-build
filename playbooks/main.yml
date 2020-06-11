@@ -19,41 +19,25 @@
       git:
         repo: https://github.com/cuevae/shopping-list-rn-expo.git
         dest: /vagrant/shopping-list-app
-    - name: Check if node_modules symlink exists
-      stat:
-        path: /vagrant/shopping-list-app/node_modules
-      register: node_modules_symlink
-    - name: Delete node_modules symlink if exists
-      file:
-        path: /vagrant/shopping-list-app/node_modules
-        state: absent
-      when: node_modules_symlink.stat.exists
-    - name: Check if node_modules folder exists
-      stat:
-        path: /home/vagrant/node_modules
-      register: node_modules_folder
-    - name: Delete node_modules folder if exists
-      file:
-        path: /home/vagrant/node_modules
-        state: absent
-      when: node_modules_folder.stat.exists
-    - name: Create node_modules folder
-      file:
-        path: /home/vagrant/node_modules
-        owner: vagrant
-        group: vagrant
-        mode: '0755'
-        state: directory
-    - name: Symlink node_modules folder
-      file: 
-        src: /home/vagrant/node_modules
-        dest: /vagrant/shopping-list-app/node_modules
-        owner: vagrant
-        group: vagrant
-        state: link
-    - name: Install NPM dependencies based on package.json from SLA repository
+        force: yes
+    - name: Install Yarn globally
       npm:
-        path: /vagrant/shopping-list-app
+        name: yarn
+        global: yes
+    - name: Install Expo-CLI globally
+      npm:
+        name: expo-cli
+        global: yes
+    - name: User Yarn to install dependencies
+      yarn:
+        path : /vagrant/shopping-list-app
+    - name: Set environment variable for Expo with the sla-host local ip
+      lineinfile:
+        path: /etc/environment
+        line: REACT_NATIVE_PACKAGER_HOSTNAME=192.168.1.129
+    - name: Increase number of files watched so remote sync can work without issues
+      shell:
+        cmd: 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p'
 # DB hosts provisioning
 - hosts: db-host
   tasks:
@@ -65,9 +49,14 @@
       template:
         src: psql-sla-db-init.sql.j2
         dest: /tmp/psql-sla-db-init.sql
+    - name: Create file to collect PostgreSQL logs
+      file:
+        path: /tmp/pg.log
+        state: touch
+        mode: '0766'
     - name: Initialize DB
       shell:
-        cmd: 'sudo -u postgres createdb sla_db && sudo -u postgres psql sla_db < /tmp/psql-sla-db-init.sql'
+        cmd: 'sudo -u postgres createdb sla_db > /tmp/pg.log 2>&1 && sudo -u postgres psql sla_db < /tmp/psql-sla-db-init.sql > /tmp/pg.log 2>&1'
     - name: Remove initialization template
       file:
         state: absent
@@ -81,11 +70,6 @@
       template:
         src: postgREST-sladb-conn.conf.j2
         dest: /home/vagrant/postgREST-sladb-conn.conf
-    - name: Create file to collect PostgREST connection logs
-      file:
-        path: /tmp/postgrest.log
-        state: touch
-        mode: '0766'
     - name: Start PostgREST to run in the background
       shell:
         cmd: 'nohup postgrest /home/vagrant/postgREST-sladb-conn.conf </dev/null >/tmp/postgrest.log 2>&1 &'

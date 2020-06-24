@@ -1,2 +1,4 @@
 .vagrant/
 shopping-list-app/
+shopping-list-socket/
+shopping-list-comms/

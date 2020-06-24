@@ -15,6 +15,10 @@
       apt:
         name: git
         state: latest
+    - name: Install Node Typescript
+      apt:
+        name: node-typescript
+        state: latest
     - name: Clone app repository
       git:
         repo: https://github.com/cuevae/shopping-list-rn-expo.git
@@ -25,7 +29,7 @@
         name: yarn
         global: yes
     - name: Install Expo-CLI globally
-      npm:
+      yarn:
         name: expo-cli
         global: yes
     - name: User Yarn to install dependencies
@@ -34,13 +38,16 @@
     - name: Set environment variable for Expo with the sla-host local ip
       lineinfile:
         path: /etc/environment
-        line: REACT_NATIVE_PACKAGER_HOSTNAME=192.168.1.129
+        line: REACT_NATIVE_PACKAGER_HOSTNAME=192.168.1.129 #todo turn IP into a variable
     - name: Increase number of files watched so remote sync can work without issues
       shell:
         cmd: 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p'
 # DB hosts provisioning
 - hosts: db-host
   tasks:
+    - name: Update cache
+      apt:
+        update_cache: yes
     - name: Install PostgreSQL
       apt:
         name: postgresql
@@ -73,3 +80,31 @@
     - name: Start PostgREST to run in the background
       shell:
         cmd: 'nohup postgrest /home/vagrant/postgREST-sladb-conn.conf </dev/null >/tmp/postgrest.log 2>&1 &'
+- hosts: socket-host
+  tasks:
+    - name: Update cache
+      apt:
+        update_cache: yes
+    - name: Read installation instructions for NodeJS 14
+      shell: curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+    - name: Install NodeJS (NPM installs as well)
+      apt:
+        name: nodejs
+        state: latest
+    - name: Install GIT
+      apt:
+        name: git
+        state: latest
+    - name: Install Node Typescript
+      apt:
+        name: node-typescript
+        state: latest
+    - name: Install Yarn globally
+      npm:
+        name: yarn
+        global: yes
+    - name: Clone web socket server repository
+      git:
+        repo: https://github.com/cuevae/shopping-list-socket.git
+        dest: /vagrant/shopping-list-socket
+        force: yes

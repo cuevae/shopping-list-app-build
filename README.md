@@ -5,6 +5,7 @@ Requirements:
 
 - Git
 - Vagrant
+- VirtualBox
 - Ansible
 
 Steps:

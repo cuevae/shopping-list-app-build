@@ -1,6 +1,13 @@
 # shopping-list-app-build
 Building elements for Shopping List App
 
+Requirements:
+
+- Git
+- Vagrant
+- VirtualBox
+- Ansible
+
 Steps:
 
 0. Create a folder where you want to set up the builder and the app

@@ -42,6 +42,15 @@
     - name: Increase number of files watched so remote sync can work without issues
       shell:
         cmd: 'echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p'
+    #- name: Install desktop interface and Google Chrome for SLA host
+    #  shell:
+    #    cmd: "sudo apt-get install -y lubuntu-desktop virtualbox-guest-dkms virtualbox-guest-utils virtualbox-guest-x11
+    #           wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+    #            vim /etc/apt/sources.list <- deb http://dl.google.com/linux/deb/ stable main
+    #            sudo apt-get update
+    #            sudo apt-get install google-chrome-stable
+    # Pending: react dev-tools install with yarn
+    #"
 # DB hosts provisioning
 - hosts: db-host
   tasks:
@@ -108,3 +117,6 @@
         repo: https://github.com/cuevae/shopping-list-socket.git
         dest: /vagrant/shopping-list-socket
         force: yes
+    - name: User Yarn to install dependencies
+      yarn:
+        path : /vagrant/shopping-list-socket

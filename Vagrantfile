@@ -14,7 +14,9 @@ Vagrant.configure("2") do |config|
   config.vm.define "sla-host" do |sla|
 
     sla.vm.provider "virtualbox" do |vb|
-      vb.memory = "1024"
+      vb.memory = "2048"
+      vb.gui = true
+      vb.customize ["modifyvm", :id, "--vram", "256"]
     end
 
     sla.vm.provision "ansible" do |ansible|
